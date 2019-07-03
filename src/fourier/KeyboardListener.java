@@ -39,6 +39,10 @@ public class KeyboardListener implements KeyListener {
                 break;
             case '+':
                 panel.evolve();
+                break;
+            case '-':
+                panel.evolve(false);
+                break;
             default:
                 break;
         }

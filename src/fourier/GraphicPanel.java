@@ -40,7 +40,7 @@ public class GraphicPanel extends JPanel {
         this.x0 = 237;
         this.y0 = 659;
         this.zoom = 9.64;
-        this.defaultPeriod = 0.05;
+        this.defaultPeriod = 0.005;
         ActionListener listener = new ActionListener() {
             public void actionPerformed(ActionEvent ev) {
                 date++;
@@ -182,6 +182,14 @@ public class GraphicPanel extends JPanel {
     public void evolve(double dt) {
         this.world.evolve(dt);
         this.repaint();
+    }
+
+    public void evolve(boolean forward) {
+        if (forward) {
+            evolve(this.defaultPeriod);
+        } else {
+            evolve(-this.defaultPeriod);
+        }
     }
 
     public void evolve() {
