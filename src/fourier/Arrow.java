@@ -15,22 +15,31 @@ import java.awt.Graphics;
  */
 class Arrow {
 
-    private double magnitude;
-    private double angle;
+    private double realPart;
+    private double imgPart;
     private double rotSpeed;
 
     public Arrow(double mag, double a, double speed) {
-        magnitude = mag;
-        angle = a;
+        realPart = mag * Math.cos(a);
+        imgPart = mag * Math.sin(a);
+
         rotSpeed = speed;
     }
 
     public Arrow() {
-        this(1, 0, 0);
+        this(0, 0, 0);
     }
 
     public void evolve(double period) {
-        angle += period * rotSpeed;
+        double dAngle = period * rotSpeed;
+
+        double cosAngle = Math.cos(dAngle);
+        double sinAngle = Math.sin(dAngle);
+
+        double newRealPart = realPart * cosAngle - imgPart * sinAngle;
+        double newImgPart = realPart * sinAngle + imgPart * cosAngle;
+        realPart = newRealPart;
+        imgPart = newImgPart;
     }
 
     public void paint(Graphics g, double panelHeight, double x0, double y0, double zoom) {
@@ -44,13 +53,25 @@ class Arrow {
 
         g.setColor(Color.black);
         g.drawLine((int) x0, (int) (panelHeight - y0), xApp, yApp);
+        g.setColor(Color.blue);
+        int testRad = 5;
+        g.drawOval(xApp - testRad, yApp - testRad, 2 * testRad + 1, 2 * testRad + 1);
     }
 
     public double getX() {
-        return magnitude * Math.cos(angle);
+        return realPart;
     }
 
     public double getY() {
-        return magnitude * Math.sin(angle);
+        return imgPart;
+    }
+
+    public Point2d getTip() {
+        return new Point2d(realPart, imgPart);
+    }
+
+    public void add(Arrow toAdd) {
+        this.realPart += toAdd.realPart;
+        this.imgPart += toAdd.imgPart;
     }
 }
