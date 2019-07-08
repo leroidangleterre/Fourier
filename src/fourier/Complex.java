@@ -13,20 +13,23 @@ import java.awt.Graphics;
  * @author arthurmanoha Representation of a complex number displayed with an
  * arrow.
  */
-class Arrow {
+class Complex {
 
     private double realPart;
     private double imgPart;
     private double rotSpeed;
 
-    public Arrow(double mag, double a, double speed) {
-        realPart = mag * Math.cos(a);
-        imgPart = mag * Math.sin(a);
+    public Complex(double real, double img, double speed) {
+
+        realPart = real;
+        imgPart = img;
+//        realPart = mag * Math.cos(a);
+//        imgPart = mag * Math.sin(a);
 
         rotSpeed = speed;
     }
 
-    public Arrow() {
+    public Complex() {
         this(0, 0, 0);
     }
 
@@ -43,6 +46,10 @@ class Arrow {
     }
 
     public void paint(Graphics g, double panelHeight, double x0, double y0, double zoom) {
+        paint(g, panelHeight, x0, y0, zoom, Color.blue);
+    }
+
+    public void paint(Graphics g, double panelHeight, double x0, double y0, double zoom, Color c) {
 
         // Coordinates of the end of the arrow
         double x = getX();
@@ -52,10 +59,11 @@ class Arrow {
         int yApp = g.getClipBounds().height - (int) (y * zoom + y0);
 
         g.setColor(Color.black);
-        g.drawLine((int) x0, (int) (panelHeight - y0), xApp, yApp);
-        g.setColor(Color.blue);
+        g.drawLine((int) xApp, (int) (panelHeight - y0), xApp, yApp);
+        g.setColor(c);
+//        System.out.println("--> " + c);
         int testRad = 5;
-        g.drawOval(xApp - testRad, yApp - testRad, 2 * testRad + 1, 2 * testRad + 1);
+        g.fillOval(xApp - testRad, yApp - testRad, 2 * testRad + 1, 2 * testRad + 1);
     }
 
     public double getX() {
@@ -66,12 +74,37 @@ class Arrow {
         return imgPart;
     }
 
+    public double getMagnitude() {
+        return Math.sqrt(realPart * realPart + imgPart * imgPart);
+    }
+
+    public double getPhase() {
+        return Math.atan2(imgPart, realPart);
+    }
+
+    public void setAngle(double newAngle) {
+        double mag = getMagnitude();
+        realPart = mag * Math.cos(newAngle);
+        imgPart = mag * Math.sin(newAngle);
+    }
+
     public Point2d getTip() {
         return new Point2d(realPart, imgPart);
     }
 
-    public void add(Arrow toAdd) {
-        this.realPart += toAdd.realPart;
-        this.imgPart += toAdd.imgPart;
+    public void add(Complex toAdd) {
+        if (toAdd != null) {
+            this.realPart += toAdd.realPart;
+            this.imgPart += toAdd.imgPart;
+        }
+    }
+
+    public void add(double rePart, double imPart) {
+        this.realPart += rePart;
+        this.imgPart += imPart;
+    }
+
+    public String toString() {
+        return "(" + realPart + " + " + imgPart + "j)";
     }
 }

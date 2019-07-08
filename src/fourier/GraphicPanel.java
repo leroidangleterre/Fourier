@@ -37,9 +37,9 @@ public class GraphicPanel extends JPanel {
 
     public GraphicPanel() {
         super();
-        this.x0 = 237;
-        this.y0 = 659;
-        this.zoom = 9.64;
+        this.x0 = 326;
+        this.y0 = 118;
+        this.zoom = 649;
         this.defaultPeriod = 0.005;
         ActionListener listener = new ActionListener() {
             public void actionPerformed(ActionEvent ev) {
@@ -81,6 +81,9 @@ public class GraphicPanel extends JPanel {
         double dx, dy;
         double zoomFact;
 
+        if (world == null) {
+            System.out.println("ERROR world is NULL");
+        }
         this.world.paint(g, panelHeight,
                 this.x0, this.y0, this.zoom);
 
@@ -219,6 +222,15 @@ public class GraphicPanel extends JPanel {
             this.isRunning = true;
             this.play();
         }
+    }
+
+    void changeArrowAngles() {
+        world.changeArrowAngles();
+        repaint();
+    }
+
+    public void increaseNbHarmonics(int increment) {
+        world.increaseNbHarmonics(increment);
     }
 
 }

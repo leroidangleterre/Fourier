@@ -43,6 +43,22 @@ public class KeyboardListener implements KeyListener {
             case '-':
                 panel.evolve(false);
                 break;
+            case '.':
+                panel.changeArrowAngles();
+                break;
+            default:
+                break;
+        }
+        switch (e.getKeyCode()) {
+
+            case KeyEvent.VK_LEFT:
+                panel.increaseNbHarmonics(-1);
+                panel.repaint();
+                break;
+            case KeyEvent.VK_RIGHT:
+                panel.increaseNbHarmonics(+1);
+                panel.repaint();
+                break;
             default:
                 break;
         }
