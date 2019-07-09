@@ -16,7 +16,7 @@ public class Fourier {
      */
     public static void main(String[] args) {
 
-        World world = new World();
+        World world = new WorldReal();
         GraphicPanel panel = new GraphicPanel(world);
         Window window = new Window(panel);
 
