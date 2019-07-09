@@ -34,20 +34,45 @@ public class WorldReal extends World {
     double phases[];
 
 //    double values[] = {1, 4, 3, 2};
-    double values[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}; // Real Square function
-//        double values[] = {0, 0, 0, 1, 1, 1, 0, 0, 0, 2, 2, 2, 0, 0, 0}; // other Square function
-
-    private int nbHarmonicsVisible = 6;
+//    double values[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+//        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // Real Square function
+//    double values[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+    // Triangular wave
+    double values[];
+    private int nbHarmonicsVisible = 0;
 
     public WorldReal() {
+
+        N = 1000;
+        values = new double[N];
+        for (int i = 0; i < N; i++) {
+//            Triangular wave
+            values[i] = i / (double) N - 0.5;
+            if (values[i] < 0) {
+                values[i] += 0.2;
+            }
+            // Modif on triangular wave:
+            double fact = 0.3;
+            if (i < N / 2) {
+                values[i] += fact * Math.sin(i / (double) N * 2 * PI);
+            } else {
+                values[i] -= fact * Math.sin(i / (double) N * 2 * PI);
+            }
+            // Sine wave
+//            values[i] = Math.sin((i / (double) N) * 2 * PI);
+//            // Sum of sine waves
+//            for (int j = 0; j < 19; j++) {
+//                values[i] += (Math.exp(-j / 5)) * Math.sin((i / (double) N) * 2 * PI * j);
+//            }
+//            // Square function
+//            values[i] = i < N / 2 ? 0 : 1;
+        }
         width = 100;
         height = 720;
         date = 0;
 
         currentSum = new Complex();
-
-        N = values.length;
 
         deltaX = 1.0 / N;
 
@@ -56,10 +81,9 @@ public class WorldReal extends World {
         phases = new double[N];
 
         // Computing Cn :
-        for (int n = 0; n < N; n++) {
+        for (int n = 0; n < N / 2; n++) { // N/2 is the highest significant frequency, cannot compute more.
             fourierCoefs[n] = new Complex();
             for (int k = 0; k < N; k++) {
-//                double frequency = 2*PI*n/(N*deltaX);
                 fourierCoefs[n].add(values[k] * Math.cos(-2 * PI * n * k / N),
                         values[k] * Math.sin(-2 * PI * n * k / N));
                 amplitudes[n] = fourierCoefs[n].getMagnitude();
@@ -97,12 +121,15 @@ public class WorldReal extends World {
             double value = 0;
             for (int n = 0; n < Math.min(nbHarmonicsVisible, fourierCoefs.length); n++) {
                 double magnitude = fourierCoefs[n].getMagnitude();
+                if (n > 0) {
+                    magnitude *= 2; // The n>=1 components have twice the contribution.
+                }
                 double frequency = 2 * PI * n / (N * deltaX);
                 double phase = fourierCoefs[n].getPhase();
                 value += magnitude * Math.cos(frequency * x + phase);
             }
             // TODO: why divide y ?
-            Complex point = new Complex(x, value / 40, 0);
+            Complex point = new Complex(x, value / N, 0);
             point.paint(g, panelHeight, x0, y0, zoom, c);
         }
 
@@ -115,19 +142,6 @@ public class WorldReal extends World {
             dataPoint.paint(g, panelHeight, x0, y0, zoom, c);
         }
 
-//        for (int n = 0; n < fourierCoefs.length; n++) {
-//            Complex a = fourierCoefs[n];
-//            if (a != null) {
-//                System.out.println("WorldReal, painting with coef " + a);
-//                a.paint(g, panelHeight, x0 + dX0 * zoom, y0 + dY0 * zoom, zoom);
-//                dX0 += a.getX();
-//                dY0 += a.getY();
-//            }
-//        }
-//
-//        for (Point2d trackPoint : track) {
-//            trackPoint.paint(g, panelHeight, x0, y0, zoom);
-//        }
     }
 
     public double getWidth() {
@@ -160,6 +174,9 @@ public class WorldReal extends World {
 
     public void increaseNbHarmonics(int increment) {
         nbHarmonicsVisible = Math.min(Math.max(0, nbHarmonicsVisible + increment), values.length);
+
+        // Trim the amount of visible harmonics to the significatnt ones (N/2 max).
+        nbHarmonicsVisible = Math.min(nbHarmonicsVisible, N / 2);
         System.out.println("nb harmonics: " + nbHarmonicsVisible);
     }
 }

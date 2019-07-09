@@ -26,7 +26,7 @@ public class Window extends JFrame {
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
-        this.setSize(new Dimension(1350, 1020));
+        this.setSize(new Dimension(1140, 1020));
 
         this.addMouseListener(new MyMouseListener());
         this.addMouseMotionListener(new MyMouseMotionListener());

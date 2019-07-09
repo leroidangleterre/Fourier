@@ -58,11 +58,12 @@ class Complex {
         int xApp = (int) (x * zoom + x0);
         int yApp = g.getClipBounds().height - (int) (y * zoom + y0);
 
-        g.setColor(Color.black);
-        g.drawLine((int) xApp, (int) (panelHeight - y0), xApp, yApp);
+        // Draw vertical line to the x-axis
+//        g.setColor(Color.black);
+//        g.drawLine((int) xApp, (int) (panelHeight - y0), xApp, yApp);
+        // Draw the circle
         g.setColor(c);
-//        System.out.println("--> " + c);
-        int testRad = 5;
+        int testRad = 2;
         g.fillOval(xApp - testRad, yApp - testRad, 2 * testRad + 1, 2 * testRad + 1);
     }
 
